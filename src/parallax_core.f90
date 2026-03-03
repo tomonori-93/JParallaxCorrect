@@ -2,14 +2,18 @@
 !     Copyright (C) 2026-2026 Satoki Tsujino. All rights reserved.
 !-----------------------------------------------------------------------
 
-module libparallax
+module parallax_core
 !! Fortran library for parallax correction of geostationary meteorological satellites
 
-subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
-  &                          re, rp, rrat, hsat, psat, lsat, missing_value ) bind(c, name='Parallax_Correct')
-!! Core library for parallax correction
-  use Math_Const
   implicit none
+
+  double precision, parameter :: pi_dp=3.14159265358979d0
+
+contains
+
+subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
+  &                          re, rp, hsat, psat, lsat, missing_value )
+!! Core library for parallax correction
   double precision, intent(in) :: lon_cld(:,:)  !! Longitude for each pixel [rad]
   double precision, intent(in) :: lat_cld(size(lon_cld,1),size(lon_cld,2))
                                                    !! Latitude for each pixel [rad]
@@ -25,7 +29,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   double precision, intent(in) :: hsat  !! satellite_earth_center_distance
   double precision, intent(in) :: psat  !! satellite_latitude
   double precision, intent(in) :: lsat  !! satellite_longitude
-  double precision, intent(in), optional :: missing_value  !! missing value
+  double precision, intent(in) :: missing_value  !! missing value
 
   double precision :: x0, y0, z0, xs, ys, zs
   double precision :: rrat  !! re/rp
@@ -33,7 +37,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   double precision :: xx0, yy0, zz0, xxs, yys, zzs, xys0, x20, y20, z20, onemr
   double precision :: d2r, r2d, xyz0, gamcoe, gamcoe2, tparm
   double precision :: ztmp, zeps, parfunc, pardfunc, ztmpa, ztmpb, ztmpc
-  double precision :: xa, ya, za, lata, lona, rmissing_value
+  double precision :: xa, ya, za, lata, lona
   integer :: i, j, nx, ny
 
   d2r=pi_dp/180.0d0
@@ -45,11 +49,11 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   nx=size(lon_cld,1)
   ny=size(lon_cld,2)
 
-  if(present(missing_value))then
-     rmissing_value=missing_value
-  else
-     rmissing_value=-100.0d0
-  end if
+!  if(present(missing_value))then
+!     rmissing_value=missing_value
+!  else
+!     rmissing_value=-100.0d0
+!  end if
 
   do j=1,ny
      do i=1,nx
@@ -77,7 +81,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
         xys0=xxs*xx0+yys*yy0
         xyz0=x20+y20+z20
 
-        if(h/=rmissing_value.and.z0/=0.0d0)then
+        if(h/=missing_value.and.z0/=0.0d0)then
 
            ztmp=z0
            ztmpa=ztmp
@@ -134,9 +138,9 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   &                                     *((2.0d0+gamcoe*h*rrat)*gamcoe*h*rrat  &
   &                                      -z0*z0*(gamcoe2-rrat**2))))
               if(tparm<0.0d0.or.tparm>1.0d0)then
-                 tparm=rmissing_value
-                 lon_cor(i,j)=rmissing_value
-                 lat_cor(i,j)=rmissing_value
+                 tparm=missing_value
+                 lon_cor(i,j)=missing_value
+                 lat_cor(i,j)=missing_value
                  cycle
 !                 write(*,*) "*** ERROR (Parallax_Himawari) ***: tparm is invalid."
               end if
@@ -157,7 +161,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
            lon_cor(i,j)=lona
            lat_cor(i,j)=lata
 
-        else if(h/=rmissing_value.and.z0==0.0d0)then
+        else if(h/=missing_value.and.z0==0.0d0)then
 
            tparm=((xys0-x20-y20)/((xs-x0)**2+(ys-y0)**2))  &
   &             *(-1.0d0+dsqrt(1.0d0+((xs-x0)**2+(ys-y0)**2)  &
@@ -167,9 +171,9 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   &                *(-1.0d0-dsqrt(1.0d0+((xs-x0)**2+(ys-y0)**2)  &
   &                                     *(2.0*rrat*h+h**2)/((xys0-x20-y20)**2)))
               if(tparm<0.0d0.or.tparm>1.0d0)then
-                 tparm=rmissing_value
-                 lon_cor(i,j)=rmissing_value
-                 lat_cor(i,j)=rmissing_value
+                 tparm=missing_value
+                 lon_cor(i,j)=missing_value
+                 lat_cor(i,j)=missing_value
                  cycle
 !                 write(*,*) "*** ERROR (Parallax_Himawari) ***: tparm is invalid."
               end if
@@ -185,9 +189,9 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
 
         else
 
-           tparm=rmissing_value
-           lon_cor(i,j)=rmissing_value
-           lat_cor(i,j)=rmissing_value
+           tparm=missing_value
+           lon_cor(i,j)=missing_value
+           lat_cor(i,j)=missing_value
 
         end if
 
@@ -198,7 +202,7 @@ end subroutine Parallax_Correct
 
 
 subroutine tri_interpolation_2d( x_in, y_in, iv, ivad, x_out, y_out, ov,  &
-  &                              ovad, missing_value, jflag )  bind(c, name='tri_interpolation_2d')
+  &                              ovad, missing_value, jflag )
 !-- 2 次元不等間隔格子点 (x_in,y_in) 上で定義された物理量 iv を
 !-- 同じ次元の等間隔格子 (x_out,y_out) に
 !-- 三角点補間 (tri_interpolation) するルーチン (補間値は ov).
@@ -210,8 +214,8 @@ subroutine tri_interpolation_2d( x_in, y_in, iv, ivad, x_out, y_out, ov,  &
   double precision, dimension(size(x_in,1),size(x_in,2)), intent(in) :: ivad  ! iv 以外に追加物理量
   double precision, dimension(:), intent(in) :: x_out  ! 補間する座標 x 成分 (x_in と同じ単位, 等間隔)
   double precision, dimension(:), intent(in) :: y_out  ! 補間する座標 y 成分 (y_in と同じ単位, 等間隔)
-  double precision, dimension(size(x_out),size(y_out)), intent(inout) :: ov  ! 補間された値
-  double precision, dimension(size(x_out),size(y_out)), intent(inout) :: ovad  ! ivad の補間された値
+  double precision, dimension(size(x_out),size(y_out)), intent(out) :: ov  ! 補間された値
+  double precision, dimension(size(x_out),size(y_out)), intent(out) :: ovad  ! ivad の補間された値
   double precision, intent(in) :: missing_value
   character(1), intent(in) :: jflag  ! 内挿点の値が更新される基準.
                                      ! 'u' : 値が大きいと更新, 'l' : 値が小さいと更新.
@@ -354,7 +358,7 @@ subroutine tri_interpolation_2d( x_in, y_in, iv, ivad, x_out, y_out, ov,  &
 end subroutine tri_interpolation_2d
 
 
-subroutine tri_interpolation( x, y, val, point, oval )  bind(c, name='tri_interpolation')
+subroutine tri_interpolation( x, y, val, point, oval )
   ! 三角形の要素内の線形内挿ルーチン
   ! 要素内における内挿点 point(1:2) によって分割される領域面積に対して,
   ! oval = \sum^{3}_{i}(S_(i)*val(i)) / S, 
@@ -366,7 +370,7 @@ subroutine tri_interpolation( x, y, val, point, oval )  bind(c, name='tri_interp
   double precision, intent(in) :: y(3)    ! 三角形の各頂点 y 座標
   double precision, intent(in) :: val(3)  ! 三角形の各頂点での値
   double precision, intent(in) :: point(2)! 内挿点 point(1)<=x 座標, point(2)<=y 座標
-  double precision, intent(inout) :: oval  ! 内挿点での値
+  double precision, intent(out) :: oval  ! 内挿点での値
   double precision :: Stot, S(3), xp, yp
 
   xp=point(1)
@@ -381,25 +385,25 @@ subroutine tri_interpolation( x, y, val, point, oval )  bind(c, name='tri_interp
 end subroutine tri_interpolation
 
 
-subroutine check_square_intersect( x, y, inum, selopt ) bind(c, name='check_square_intersect')
+subroutine check_square_intersect( x, y, inum, selopt )
 !-- 四角形の 4 点の座標から短い方の対角点を求める.
 !-- selopt = 'l' にすれば長い方が返される.
   implicit none
   double precision, intent(in) :: x(4)  ! 四角形の 4 点 x 座標
   double precision, intent(in) :: y(4)  ! 四角形の 4 点 y 座標
   integer, intent(out) :: inum(2)  ! 最短対角点の座標
-  character(1), intent(in), optional :: selopt  ! 'l' = 対角線の長い方を選ぶ.
-                                                ! 's' = 対角線の短い方を選ぶ.
-                                                ! デフォルト: 's'
+  character(1), intent(in) :: selopt  ! 'l' = 対角線の長い方を選ぶ.
+                                      ! 's' = 対角線の短い方を選ぶ.
+                                      ! デフォルト: 's'
   logical :: flag_long
 
   flag_long=.false.
 
-  if(present(selopt))then
+  !if(present(selopt))then
      if(selopt(1:1)=='l')then
         flag_long=.true.
      end if
-  end if
+  !end if
 
   !-- 四角形 (ABCD) の 2 点を結ぶ線のとり方は 3 種類のみ.
   !-- AB-CD, AC-BD, AD-BC
@@ -454,4 +458,105 @@ subroutine check_square_intersect( x, y, inum, selopt ) bind(c, name='check_squa
 
 end subroutine check_square_intersect
 
-end module libparallax
+
+logical function check_intersect( x1, y1, x2, y2 )
+! 2 本の線分の交差を判定する. 
+! 求め方: 与えられた {x1,y1} と {x2,y2} で定義される 2 本の線分が
+! 交差していることを線分の交差判定から求める. 
+
+  implicit none
+
+  double precision, intent(in) :: x1(2)  ! 1 本目の線分 x 方向格子点番号
+  double precision, intent(in) :: y1(2)  ! 1 本目の線分 y 方向格子点番号
+  double precision, intent(in) :: x2(2)  ! 2 本目の線分 x 方向格子点番号
+  double precision, intent(in) :: y2(2)  ! 2 本目の線分 y 方向格子点番号
+  double precision :: xa, ya, xb, yb, xc, yc, xd, yd, t1, t2
+
+  check_intersect=.false.
+
+  xa=x1(1)
+  xb=x1(2)
+  xc=x2(1)
+  xd=x2(2)
+  ya=y1(1)
+  yb=y1(2)
+  yc=y2(1)
+  yd=y2(2)
+
+  !-- {x1,y1} を通る直線と, 線分 {x2,y2} の交差判定
+  t1=(xa-xb)*(yc-ya)+(ya-yb)*(xa-xc)
+  t2=(xa-xb)*(yd-ya)+(ya-yb)*(xa-xd)
+  if(t1*t2<0.0d0)then
+     !-- {x2,y2} を通る直線と, 線分 {x1,y1} の交差判定
+     t1=(xc-xd)*(ya-yc)+(yc-yd)*(xc-xa)
+     t2=(xc-xd)*(yb-yc)+(yc-yd)*(xc-xb)
+     if(t1*t2<0.0d0)then  ! 両方負でなければ両方の線分が交差していない.
+        check_intersect=.true.
+        return
+     end if
+  end if
+
+  return
+
+end function check_intersect
+
+
+logical function check_triclose( xposi, yposi, ival )
+! 三角形で囲まれた閉曲線領域内に ival 点があるかどうかをチェックする.
+! この判定は与えられる xposi, yposi が時計回り, 反時計回りどちらで
+! 定義されていても, 構成する三角形の重心から判断するので問題ない.
+! 求め方: ival と重心のなす線分が, 三角形の各辺のいずれとも交差
+!         していないことを判断基準にする. 線分の交差判定は 1 線分と
+!         1 直線の交差判定を交互に行う.
+
+  implicit none
+
+  double precision, intent(in) :: xposi(3)  ! 三角形頂点の x 方向格子点番号
+  double precision, intent(in) :: yposi(3)  ! 三角形頂点の y 方向格子点番号
+  double precision, intent(in) :: ival(2)  ! チェックする点の x, y 格子点番号
+  integer :: ii
+  double precision, dimension(4) :: xt, yt
+  double precision :: xg, yg, xi, yi, xa, xb, ya, yb, t1, t2
+
+  xt(1:3)=xposi(1:3)
+  yt(1:3)=yposi(1:3)
+  xt(4)=xposi(1)
+  yt(4)=yposi(1)
+  xi=ival(1)
+  yi=ival(2)
+
+  check_triclose=.true.
+
+!-- 三角形重心の計算
+  xg=(xt(1)+xt(2)+xt(3))/3.0d0
+  yg=(yt(1)+yt(2)+yt(3))/3.0d0
+
+!-- 各辺について, 重心と ival の線分との交差を判定.
+
+  do ii=1,3
+     xa=xt(ii)
+     xb=xt(ii+1)
+     ya=yt(ii)
+     yb=yt(ii+1)
+
+     !-- 三角形の一辺を通る直線と, 三角形重心と判定点の線分の交差判定
+     t1=(xa-xb)*(yg-ya)+(ya-yb)*(xa-xg)
+     t2=(xa-xb)*(yi-ya)+(ya-yb)*(xa-xi)
+     if(t1*t2<0.0d0)then
+        !-- 三角形重心と判定点を通る直線と, 三角形の一辺の交差判定
+        t1=(xg-xi)*(ya-yg)+(yg-yi)*(xg-xa)
+        t2=(xg-xi)*(yb-yg)+(yg-yi)*(xg-xb)
+        if(t1*t2<0.0d0)then  ! 両方負でなければ両方の線分が交差していない.
+           check_triclose=.false.
+           return
+        end if
+     end if
+
+  end do
+
+  return
+
+end function check_triclose
+
+
+end module parallax_core
