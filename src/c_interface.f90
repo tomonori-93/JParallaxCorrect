@@ -6,13 +6,13 @@ module c_interface
 
 contains
 
-  subroutine c_parallax_correct(n, m, lon_cld, lat_cld, h_cld,  &
+  subroutine c_parallax_correct(n, m, lon_pix, lat_pix, h_pix,  &
   &              lon_cor, lat_cor, re, rp, hsat, psat, lsat, missing_value)  &
   &          bind(C, name="c_parallax_correct")
     integer(c_int), value :: n, m
-    real(c_double)        :: lon_cld(n, m)
-    real(c_double)        :: lat_cld(n, m)
-    real(c_double)        :: h_cld(n, m)
+    real(c_double)        :: lon_pix(n, m)
+    real(c_double)        :: lat_pix(n, m)
+    real(c_double)        :: h_pix(n, m)
     real(c_double)        :: lon_cor(n, m)
     real(c_double)        :: lat_cor(n, m)
     real(c_double), value :: re
@@ -22,10 +22,11 @@ contains
     real(c_double), value :: lsat
     real(c_double), value :: missing_value
 
-    call Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
+    call Parallax_Correct( lon_pix, lat_pix, h_pix, lon_cor, lat_cor,  &
   &                        re, rp, hsat, psat, lsat, missing_value )
 
   end subroutine c_parallax_correct
+
 
   subroutine c_tri_interpolation_2d(n, m, l, k, x_in, y_in, iv, ivad,  &
   &                x_out, y_out, ov, ovad, missing_value, jflag )  &
@@ -47,6 +48,7 @@ contains
 
   end subroutine c_tri_interpolation_2d
 
+
   subroutine c_tri_interpolation( x, y, val, point, oval )  &
   &          bind(C, name="c_tri_interpolation")
     real(c_double)       :: x(3)
@@ -59,6 +61,7 @@ contains
 
   end subroutine c_tri_interpolation
 
+
   subroutine c_check_square_intersect( x, y, inum, selopt )  &
   &          bind(C, name="c_check_square_intersect")
     real(c_double)       :: x(4)
@@ -69,6 +72,7 @@ contains
     call check_square_intersect( x, y, inum, selopt )
 
   end subroutine c_check_square_intersect
+
 
   logical function c_check_intersect( x1, y1, x2, y2 )  &
   &          bind(C, name="c_check_intersect")
@@ -96,6 +100,19 @@ contains
 
   end function c_check_triclose
 
+
+  subroutine c_convert_Tbb2Zph(n, m, l, tval, zval, t1d, z1d, missing_value)  &
+  &          bind(C, name="c_convert_Tbb2Zph")
+    integer(c_int), value :: n, m, l
+    real(c_double)        :: tval(n, m)
+    real(c_double)        :: zval(n, m)
+    real(c_double)        :: t1d(l)
+    real(c_double)        :: z1d(l)
+    real(c_double), value :: missing_value
+
+    call convert_Tbb2Zph( tval, zval, t1d, z1d, undef )
+
+  end subroutine c_convert_Tbb2Zph
 
 
 

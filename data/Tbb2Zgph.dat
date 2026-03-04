@@ -1,0 +1,6 @@
+#The data are used to convert the satellite brightness temperature to geopotential height.
+#The data are based on the International Standard Atmospherei (i.e., the lapse rate of -6.5 K km-1 from the sea level), except for upper troposphere and lower stratosphere. 
+Geopotential-height Temperature
+m K
+0.0 303.0
+20000.0 173.0

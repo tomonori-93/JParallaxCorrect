@@ -559,4 +559,49 @@ logical function check_triclose( xposi, yposi, ival )
 end function check_triclose
 
 
+subroutine convert_Tbb2Zph( tval, zval, t1d, z1d, undef )
+! 与えられた t1d, z1d という鉛直 1 次元の気温, 高度プロファイルから
+! 各 2 次元水平面内における tval に対応する高度 zval を内挿処理して返す.
+  implicit none
+  double precision, intent(in) :: tval(:,:)
+  double precision, intent(inout) :: zval(size(tval,1),size(tval,2))
+  double precision, intent(in) :: t1d(:)
+  double precision, intent(in) :: z1d(size(t1d))
+  double precision, intent(in) :: undef
+  integer :: ii, jj, kk, ix, jy, kz, itmin
+  double precision :: tmin, dzdt
+
+  ix=size(tval,1)
+  jy=size(tval,2)
+  kz=size(t1d)
+
+  zval=undef
+
+  ! 気温の最低値をとり, これより下の格子でのみ内挿処理を行う.
+  tmin=t1d(1)
+  do kk=2,kz
+     tmin=min(tmin,t1d(kk))
+  end do
+
+  do jj=1,jy
+     do ii=1,ix
+        if(tval(ii,jj)/=undef)then
+           if(tval(ii,jj)>=tmin)then
+              do kk=1,itmin-1
+                 if((t1d(kk)-tval(ii,jj))*(t1d(kk+1)-tval(ii,jj))<0.0d0)then
+                    dzdt=(z1d(kk+1)-z1d(kk))/(t1d(kk+1)-t1d(kk))
+                    zval(ii,jj)=z1d(kk)+dzdt*(tval(ii,jj)-t1d(kk))
+                    exit
+                 end if
+              end do
+           else  ! replacing tval to tmin
+              zval(ii,jj)=z1d(itmin)
+           end if
+        end if
+     end do
+  end do
+
+end subroutine convert_Tbb2Zph
+
+
 end module parallax_core
