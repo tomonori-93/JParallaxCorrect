@@ -110,7 +110,7 @@ contains
     real(c_double)        :: z1d(l)
     real(c_double), value :: missing_value
 
-    call convert_Tbb2Zph( tval, zval, t1d, z1d, undef )
+    call convert_Tbb2Zph( tval, zval, t1d, z1d, missing_value )
 
   end subroutine c_convert_Tbb2Zph
 

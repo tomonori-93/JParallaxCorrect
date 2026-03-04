@@ -26,22 +26,19 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
   !-- Intrinsic parameters for each satellite and constants
   double precision, intent(in) :: re  !! equator_radius =6378.1370d3
   double precision, intent(in) :: rp  !! polar_radius =6356.7523d3
-  double precision, intent(in) :: hsat  !! satellite_earth_center_distance
-  double precision, intent(in) :: psat  !! satellite_latitude
-  double precision, intent(in) :: lsat  !! satellite_longitude
+  double precision, intent(in) :: hsat  !! satellite_earth_center_distance [m]
+  double precision, intent(in) :: psat  !! satellite_latitude [rad]
+  double precision, intent(in) :: lsat  !! satellite_longitude [rad]
   double precision, intent(in) :: missing_value  !! missing value
 
   double precision :: x0, y0, z0, xs, ys, zs
   double precision :: rrat  !! re/rp
   double precision :: h, lcld, pcld, lcldr, pcldr, lcldc, pcldc
   double precision :: xx0, yy0, zz0, xxs, yys, zzs, xys0, x20, y20, z20, onemr
-  double precision :: d2r, r2d, xyz0, gamcoe, gamcoe2, tparm
+  double precision :: xyz0, gamcoe, gamcoe2, tparm
   double precision :: ztmp, zeps, parfunc, pardfunc, ztmpa, ztmpb, ztmpc
   double precision :: xa, ya, za, lata, lona
   integer :: i, j, nx, ny
-
-  d2r=pi_dp/180.0d0
-!  r2d=180.0d0/pi_dp
 
   rrat=re/rp
   onemr=1.0d0-rrat**2
@@ -65,9 +62,9 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
         x0=rrat*dsin(0.5d0*pi_dp-pcldr)*dcos(lcldr)
         y0=rrat*dsin(0.5d0*pi_dp-pcldr)*dsin(lcldr)
         z0=dcos(0.5d0*pi_dp-pcldr)
-        xs=(hsat/rp)*dcos(lsat*d2r)
-        ys=(hsat/rp)*dsin(lsat*d2r)
-        zs=0.0d0
+        xs=(hsat/rp)*dcos(lsat)*dcos(psat)
+        ys=(hsat/rp)*dsin(lsat)*dcos(psat)
+        zs=(hsat/rp)*dsin(psat)
         h=h/rp
 
         xx0=xs-x0
@@ -156,7 +153,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
            ya=((1.0d0-tparm)*y0+tparm*ys)/(1.0d0+(h/rrat)*gamcoe)
 
            lata=datan2(dtan(0.5d0*pi_dp-dacos(za)),1.0d0/(rrat**2))  ! geocen -> geogra
-           lona=datan2(ya,xa)!*r2d
+           lona=datan2(ya,xa)
 
            lon_cor(i,j)=lona
            lat_cor(i,j)=lata
@@ -182,7 +179,7 @@ subroutine Parallax_Correct( lon_cld, lat_cld, h_cld, lon_cor, lat_cor,  &
            xa=((1.0d0-tparm)*x0+tparm*xs)/(1.0d0+(h/rrat))
            ya=((1.0d0-tparm)*y0+tparm*ys)/(1.0d0+(h/rrat))
 
-           lona=datan2(ya,xa)!*r2d
+           lona=datan2(ya,xa)
 
            lon_cor(i,j)=lona
            lat_cor(i,j)=pcldr
@@ -579,8 +576,12 @@ subroutine convert_Tbb2Zph( tval, zval, t1d, z1d, undef )
 
   ! 気温の最低値をとり, これより下の格子でのみ内挿処理を行う.
   tmin=t1d(1)
+  itmin=1
   do kk=2,kz
-     tmin=min(tmin,t1d(kk))
+     if(tmin>t1d(kk))then
+        tmin=t1d(kk)
+        itmin=kk
+     end if
   end do
 
   do jj=1,jy

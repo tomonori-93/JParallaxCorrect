@@ -113,7 +113,7 @@ function convert_Tbb2Zph(tval::Matrix{Float64},
 
     ccall((:c_convert_Tbb2Zph, lib),
           Cvoid,
-          (Cint, Cint, Cint, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
+          (Cint, Cint, Cint, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, Ptr{Float64}, 
            Float64),
           n, m, l, tval, zval, t1d, z1d, missing_value)
 
