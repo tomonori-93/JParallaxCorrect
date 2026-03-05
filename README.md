@@ -1,4 +1,4 @@
-# JPparallaxCorrect
+# JParallaxCorrect
 Fortran library to perform the parallax correction for images captured by geostationary meteorological satellites.
 
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17490992.svg)](https://doi.org/10.5281/zenodo.17490992) -->
