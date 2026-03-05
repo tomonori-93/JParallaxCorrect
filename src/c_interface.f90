@@ -1,4 +1,7 @@
-! file: c_interface.f90
+!-----------------------------------------------------------------------
+!     Copyright (C) 2026-2026 Satoki Tsujino. All rights reserved.
+!-----------------------------------------------------------------------
+
 module c_interface
   use iso_c_binding
   use parallax_core

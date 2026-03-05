@@ -1,5 +1,5 @@
 !-----------------------------------------------------------------------
-!     Copyright (C) 2026-2026 Satoki Tsujino. All rights reserved.
+!     Copyright (C) 2020-2026 Satoki Tsujino. All rights reserved.
 !-----------------------------------------------------------------------
 
 module parallax_core

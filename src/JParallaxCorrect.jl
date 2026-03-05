@@ -1,3 +1,7 @@
+"""
+Author: Satoki Tsujino
+Date: 2026/03/04
+"""
 module JParallaxCorrect
 
 const lib = joinpath(@__DIR__, "..", "lib", "libparallax.so")
