@@ -1,18 +1,13 @@
-# juparallax
-JuliaLang scripts for parallax correction of meteorological satellite images
+# JPparallaxCorrect
+Fortran library to perform the parallax correction for images captured by geostationary meteorological satellites.
 
 <!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17490992.svg)](https://doi.org/10.5281/zenodo.17490992) -->
-
-# Introduction of juparallax
-The juparallax is a JuliaLang script to perform parallax correction of meteorological satellite images with a Fortran core library. 
-NetCDF is supported for input data file. 
-
 
 # Features
 * Calculation of the parallax based on mathematically exact formulations
   * Only approximation: The earth on which original images of satellites are projected is a rotational ellipsoid.
-* JuliaLang script based on a Fortran library (the core part of the parallax correction) to easily perform the parallax correction
-  * Supporting NetCDF: It is commonly used in meteorological and oceanographical communities. 
+* The core library for [JParallaxCorrect.jl](https://github.com/tomonori-93/JParallaxCorrect.jl) which is a JuliaLang package to easily perform the parallax correction
+<!--  * Supporting NetCDF: It is commonly used in meteorological and oceanographical communities. -->
 
 # References
 * Tsujino, S., Horinouchi, T., Tsukada, T., Kuo, H.-C., Yamada, H., & Tsuboki, K. (2021). Inner-core wind field in a concentric eyewall replacement of Typhoon Trami (2018): A quantitative analysis based on the Himawari-8 satellite. _Journal of Geophysical Research: Atmospheres_, **126**, e2020JD034434. https://doi.org/10.1029/2020JD034434
