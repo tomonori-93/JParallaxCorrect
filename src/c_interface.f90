@@ -58,7 +58,7 @@ contains
     real(c_double)       :: y(3)
     real(c_double)       :: val(3)
     real(c_double)       :: point(2)
-    real(c_double), value :: oval
+    real(c_double)       :: oval
 
     call tri_interpolation( x, y, val, point, oval )
 
