@@ -6,7 +6,7 @@ Fortran library to perform the parallax correction for images captured by geosta
 # Features
 * Calculation of the parallax based on mathematically exact formulations
   * Only approximation: The earth on which original images of satellites are projected is a rotational ellipsoid.
-* The core library for [JParallaxCorrect.jl](https://github.com/tomonori-93/JParallaxCorrect.jl) which is a JuliaLang package to easily perform the parallax correction
+* The core library for [JParallaxCorrect.jl](src/JParallaxCorrect.jl) which is a JuliaLang package to easily perform the parallax correction
 <!--  * Supporting NetCDF: It is commonly used in meteorological and oceanographical communities. -->
 
 # References
