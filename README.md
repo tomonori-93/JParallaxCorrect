@@ -1,7 +1,7 @@
 # JParallaxCorrect
 Fortran library to perform the parallax correction for images captured by geostationary meteorological satellites.
 
-<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17490992.svg)](https://doi.org/10.5281/zenodo.17490992) -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18870145.svg)](https://doi.org/10.5281/zenodo.18870145)
 
 # Features
 * Calculation of the parallax based on mathematically exact formulations
@@ -33,8 +33,8 @@ Fortran library to perform the parallax correction for images captured by geosta
 * (as soon as possible) Separate JParallaxCorrect.jl from this repository
 * (as soon as possible) Register JParallaxCorrect.jl to General
 
-<!--# Cite as
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17490992.svg)](https://doi.org/10.5281/zenodo.17490992)
+# Cite as
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18870145.svg)](https://doi.org/10.5281/zenodo.18870145)
 
-The above DOI corresponds to the latest versioned release as published to Zenodo, where you will find all earlier releases. To cite ro-crate-py independent of version, use https://doi.org/10.5281/zenodo.17490992, which will always redirect to the latest release.
--->
+The above DOI corresponds to the latest versioned release as published to Zenodo, where you will find all earlier releases. To cite ro-crate-py independent of version, use https://doi.org/10.5281/zenodo.18870145, which will always redirect to the latest release.
+
