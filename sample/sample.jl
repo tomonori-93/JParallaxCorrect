@@ -1,5 +1,5 @@
-include("./JParallaxCorrect.jl")
-include("./wrap_netcdf.jl")
+include("../src/JParallaxCorrect.jl")
+include("../src/wrap_netcdf.jl")
 
 # For Himawari-8/9 satellite, a sample script of parallax correction
 using NCDatasets  # Reading NetCDF
